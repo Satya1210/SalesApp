@@ -1,0 +1,104 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Mart Sales Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f6f8;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🛒 Shopping Mart Sales Prediction</h2>
+        <form action="/predict" method="POST">
+            <label>Item Type:</label>
+            <select name="item_type" required>
+                <option>Dairy</option>
+                <option>Soft Drinks</option>
+                <option>Snack Foods</option>
+                <option>Baking Goods</option>
+                <option>Breads</option>
+                <option>Frozen Foods</option>
+                <option>Fruits and Vegetables</option>
+                <option>Health and Hygiene</option>
+                <option>Meat</option>
+                <option>Others</option>
+            </select>
+
+            <label>Outlet Type:</label>
+            <select name="outlet_type" required>
+                <option>Supermarket Type1</option>
+                <option>Supermarket Type2</option>
+                <option>Supermarket Type3</option>
+                <option>Grocery Store</option>
+            </select>
+
+            <label>Outlet Location:</label>
+            <select name="location_type" required>
+                <option>Tier 1</option>
+                <option>Tier 2</option>
+                <option>Tier 3</option>
+            </select>
+
+            <label>Item Visibility (0 - 1):</label>
+            <input type="number" step="0.001" min="0" max="1" name="item_visibility" required>
+
+            <label>Item MRP:</label>
+            <input type="number" step="0.01" name="item_mrp" required>
+
+            <label>Item Weight:</label>
+            <input type="number" step="0.01" name="item_weight" required>
+
+            <label>Item Fat Content:</label>
+            <select name="item_fat_content" required>
+                <option>Low Fat</option>
+                <option>Regular</option>
+            </select>
+
+            <label>Year for Prediction:</label>
+            <input type="number" min="2021" max="2030" name="year" required>
+
+            <button class="btn" type="submit">Predict Sales</button>
+        </form>
+
+        {% if prediction_text %}
+            <div class="result">{{ prediction_text }}</div>
+            <div class="result">{{ future_prediction_text }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
