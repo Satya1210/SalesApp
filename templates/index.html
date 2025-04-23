@@ -140,11 +140,5 @@
     Predicted Sales: ₹{{ '{:,.2f}'.format(prediction_text|float) }}
   </div>
   {% endif %}
-
-  {% if future_prediction_text %}
-  <div class="result">
-    Estimated Sales for {{ year }}: ₹{{ '{:,.2f}'.format(future_prediction_text|float) }}
-  </div>
-  {% endif %}
 </body>
 </html>
