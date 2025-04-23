@@ -7,8 +7,8 @@ import pandas as pd
 app = Flask(__name__)
 
 # Load the trained model
-with open('model2.pkl', 'rb') as file:
-    model2 = pickle.load(open('models/model2.pkl', 'rb'))
+model2 = pickle.load(open('models/model2.pkl', 'rb'))
+
 
 # Encoding mappings
 item_mapping = {'Baking Goods': 0, 'Breads': 1, 'Breakfast': 2, 'Canned': 3, 'Dairy': 4,
