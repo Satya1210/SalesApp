@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, render_template, request
 import pickle
 import numpy as np
@@ -6,9 +5,8 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Load the trained model
+# Load the trained model (ensure the model file path is correct)
 model2 = pickle.load(open('models/model2.pkl', 'rb'))
-
 
 # Encoding mappings
 item_mapping = {'Baking Goods': 0, 'Breads': 1, 'Breakfast': 2, 'Canned': 3, 'Dairy': 4,
@@ -39,14 +37,17 @@ def predict():
     # Derived feature
     outlet_age = year - 2021
 
+    # Prepare the input dataframe for prediction
     input_df = pd.DataFrame([[item_weight, item_fat, item_vis, item_type, item_mrp,
                                location, outlet, outlet_age]],
                              columns=['Item_Weight', 'Item_Fat_Content', 'Item_Visibility', 'Item_Type', 'Item_MRP',
                                       'Outlet_Location_Type', 'Outlet_Type', 'Age_Outlet'])
 
-    prediction = model.predict(input_df)[0]
-    predicted_growth = prediction * ((1 + 0.05) ** outlet_age)
+    # Predict sales using the trained model
+    prediction = model2.predict(input_df)[0]
+    predicted_growth = prediction * ((1 + 0.05) ** outlet_age)  # Future prediction with 5% growth
 
+    # Render the result back to the user
     return render_template('index.html',
                            prediction_text=f"Predicted Sales: ₹{round(prediction, 2)}",
                            future_prediction_text=f"Estimated Sales for {year}: ₹{round(predicted_growth, 2)}")
