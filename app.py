@@ -5,8 +5,9 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Load the trained model (ensure the model file path is correct)
-model2 = pickle.load(open('models/model2.pkl', 'rb'))
+# Load the trained model
+with open('model2.pkl', 'rb') as file:
+    model = pickle.load(file)
 
 # Encoding mappings
 item_mapping = {'Baking Goods': 0, 'Breads': 1, 'Breakfast': 2, 'Canned': 3, 'Dairy': 4,
@@ -24,33 +25,33 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Get form data
-    item_weight = float(request.form['item_weight'])
-    item_fat = fat_content_mapping.get(request.form['item_fat_content'], 0)
-    item_vis = float(request.form['item_visibility'])
-    item_type = item_mapping.get(request.form['item_type'], 0)
-    item_mrp = float(request.form['item_mrp'])
-    location = location_mapping.get(request.form['location_type'], 0)
-    outlet = outlet_mapping.get(request.form['outlet_type'], 0)
-    year = int(request.form['year'])
+    try:
+        # Get form data
+        item_weight = float(request.form['item_weight'])
+        item_fat = fat_content_mapping.get(request.form['item_fat_content'], 0)
+        item_vis = float(request.form['item_visibility'])
+        item_type = item_mapping.get(request.form['item_type'], 0)
+        item_mrp = float(request.form['item_mrp'])
+        location = location_mapping.get(request.form['location_type'], 0)
+        outlet = outlet_mapping.get(request.form['outlet_type'], 0)
+        year = int(request.form['year'])
 
-    # Derived feature
-    outlet_age = year - 2021
+        # Derived feature
+        outlet_age = year - 2021
 
-    # Prepare the input dataframe for prediction
-    input_df = pd.DataFrame([[item_weight, item_fat, item_vis, item_type, item_mrp,
-                               location, outlet, outlet_age]],
-                             columns=['Item_Weight', 'Item_Fat_Content', 'Item_Visibility', 'Item_Type', 'Item_MRP',
-                                      'Outlet_Location_Type', 'Outlet_Type', 'Age_Outlet'])
+        input_df = pd.DataFrame([[item_weight, item_fat, item_vis, item_type, item_mrp,
+                                   location, outlet, outlet_age]],
+                                 columns=['Item_Weight', 'Item_Fat_Content', 'Item_Visibility', 'Item_Type', 'Item_MRP',
+                                          'Outlet_Location_Type', 'Outlet_Type', 'Age_Outlet'])
 
-    # Predict sales using the trained model
-    prediction = model2.predict(input_df)[0]
-    predicted_growth = prediction * ((1 + 0.05) ** outlet_age)  # Future prediction with 5% growth
+        prediction = model.predict(input_df)[0]
+        predicted_growth = prediction * ((1 + 0.05) ** outlet_age)
 
-    # Render the result back to the user
-    return render_template('index.html',
-                           prediction_text=f"Predicted Sales: ₹{round(prediction, 2)}",
-                           future_prediction_text=f"Estimated Sales for {year}: ₹{round(predicted_growth, 2)}")
+        return render_template('index.html',
+                               prediction_text=f"Predicted Sales: ₹{round(prediction, 2)}",
+                               future_prediction_text=f"Estimated Sales for {year}: ₹{round(predicted_growth, 2)}")
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 if __name__ == "__main__":
     app.run(debug=True)
